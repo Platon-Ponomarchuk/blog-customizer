@@ -1,13 +1,13 @@
 import arrow from 'src/images/arrow.svg';
 
 import styles from './ArrowButton.module.scss';
-import { MouseEventHandler } from 'react';
 
 /** Функция для обработки открытия/закрытия формы */
 export type OnClick = () => void;
 
 type ArrowButtonProps = {
-	click: OnClick;
+	click: OnClick,
+	isOpen: boolean
 };
 
 export const ArrowButton = (props: ArrowButtonProps) => {
@@ -17,9 +17,9 @@ export const ArrowButton = (props: ArrowButtonProps) => {
 			role='button'
 			aria-label='Открыть/Закрыть форму параметров статьи'
 			tabIndex={0}
-			className={styles.container}
+			className={styles.container + ' ' + (props.isOpen ? styles.container_open : '')}
 			onClick={props.click}>
-			<img src={arrow} alt='иконка стрелочки' className={styles.arrow} />
+			<img src={arrow} alt='иконка стрелочки' className={styles.arrow + ' ' + (props.isOpen ? styles.arrow_open : '')} />
 		</div>
 	);
 };
