@@ -18,14 +18,18 @@
 	background: var(--white, #ffffff);
 }
 
-// .button:active {
-// 	background: var(--gold, #ffc802);
-// }
+.button:active {
+	background: var(--gold, #ffc802);
+}
 
 .submit:hover {
 	background: var(--gold-light, #FFEDAB);
 }
 
 .reset:hover {
-	background: #999999;
+	background: var(--black, #000000);
+}
+
+.reset:hover div {
+	color: var(--white, #ffffff);
 }
