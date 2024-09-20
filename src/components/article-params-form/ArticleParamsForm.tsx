@@ -13,17 +13,19 @@ import {
 	fontColors,
 	backgroundColors,
 	contentWidthArr,
-	fontSizeOptions
+	fontSizeOptions,
+	defaultArticleState
 } from 'src/constants/articleProps';
 import { Separator } from '../separator';
 
 type ArticleParamsFormProps = {
 	settings: ArticleStateType;
 	onSettingsChange: (settings: ArticleStateType) => void;
+	handleToggle: () => void;
+	isMenuOpen: boolean;
 };
 
 export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
-	const [isOpen, setIsOpen] = useState(false);
 	const [font, setFont] = useState(props.settings.fontFamilyOption);
 	const [fontSize, setFontSize] = useState(props.settings.fontSizeOption);
 	const [fontColor, setFontColor] = useState(props.settings.fontColor);
@@ -32,17 +34,12 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 		props.settings.backgroundColor
 	);
 
-
-	const handleOpen = () => {
-		setIsOpen(!isOpen);
-	};
-
 	const handleReset = () => {
-		setFont(props.settings.fontFamilyOption);
-		setFontSize(props.settings.fontSizeOption);
-		setFontColor(props.settings.fontColor);
-		setContentWidth(props.settings.contentWidth);
-		setBackgroundColor(props.settings.backgroundColor);
+		setFont(defaultArticleState.fontFamilyOption);
+		setFontSize(defaultArticleState.fontSizeOption);
+		setFontColor(defaultArticleState.fontColor);
+		setContentWidth(defaultArticleState.contentWidth);
+		setBackgroundColor(defaultArticleState.backgroundColor);
 	};
 
 	const handleSubmit = (event?: React.FormEvent) => {
@@ -54,17 +51,23 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 			backgroundColor
 		});
 		event?.preventDefault();
-		handleOpen();
+		props.handleToggle();
 	};
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape' && props.isMenuOpen) {
+			props.handleToggle();
+		}
+	});
 
 	return (
 		<>
-			<ArrowButton click={handleOpen} isOpen={isOpen} />
+			<ArrowButton click={props.handleToggle} isOpen={props.isMenuOpen} />
 			<aside
 				className={
-					styles.container + ' ' + (isOpen ? styles.container_open : '')
+					styles.container + ' ' + (props.isMenuOpen ? styles.container_open : '')
 				}>
-				<form className={styles.form}>
+				<form className={styles.form} onSubmit={handleSubmit}>
 					<Text as='h2' size={31} weight={800} uppercase dynamicLite>
 						Задайте параметры
 					</Text>
@@ -102,7 +105,7 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 					/>
 					<div className={styles.bottomContainer}>
 						<Button title='Сбросить' type='reset' onClick={handleReset}/>
-						<Button title='Применить' type='submit' onClick={handleSubmit}/>
+						<Button title='Применить' type='submit'/>
 					</div>
 				</form>
 			</aside>
