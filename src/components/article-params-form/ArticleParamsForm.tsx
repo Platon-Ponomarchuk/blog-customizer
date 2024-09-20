@@ -6,22 +6,55 @@ import { useState } from 'react';
 import { Select } from '../select/Select';
 import { RadioGroup } from '../radio-group';
 import { Text } from '../text';
+import { ArticleStateType, OptionType } from 'src/constants/articleProps';
 
 import {
 	fontFamilyOptions,
 	fontColors,
 	backgroundColors,
 	contentWidthArr,
-	fontSizeOptions,
-	defaultArticleState,
+	fontSizeOptions
 } from 'src/constants/articleProps';
 import { Separator } from '../separator';
 
-export const ArticleParamsForm = () => {
+type ArticleParamsFormProps = {
+	settings: ArticleStateType;
+	onSettingsChange: (settings: ArticleStateType) => void;
+};
+
+export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	const [isOpen, setIsOpen] = useState(false);
+	const [font, setFont] = useState(props.settings.fontFamilyOption);
+	const [fontSize, setFontSize] = useState(props.settings.fontSizeOption);
+	const [fontColor, setFontColor] = useState(props.settings.fontColor);
+	const [contentWidth, setContentWidth] = useState(props.settings.contentWidth);
+	const [backgroundColor, setBackgroundColor] = useState(
+		props.settings.backgroundColor
+	);
+
 
 	const handleOpen = () => {
 		setIsOpen(!isOpen);
+	};
+
+	const handleReset = () => {
+		setFont(props.settings.fontFamilyOption);
+		setFontSize(props.settings.fontSizeOption);
+		setFontColor(props.settings.fontColor);
+		setContentWidth(props.settings.contentWidth);
+		setBackgroundColor(props.settings.backgroundColor);
+	};
+
+	const handleSubmit = (event?: React.FormEvent) => {
+		props.onSettingsChange({
+			fontFamilyOption: font,
+			fontSizeOption: fontSize,
+			fontColor,
+			contentWidth,
+			backgroundColor
+		});
+		event?.preventDefault();
+		handleOpen();
 	};
 
 	return (
@@ -36,35 +69,40 @@ export const ArticleParamsForm = () => {
 						Задайте параметры
 					</Text>
 					<Select
-						selected={defaultArticleState.fontFamilyOption}
+						selected={font}
 						options={fontFamilyOptions}
 						title='Шрифт'
+						onChange={(option: OptionType) => setFont(option)}
 					/>
 					<RadioGroup
 						name='radio'
-						selected={defaultArticleState.fontSizeOption}
+						selected={fontSize}
 						options={fontSizeOptions}
 						title='Размер шрифта'
+						onChange={(option: OptionType) => setFontSize(option)}
 					/>
 					<Select
-						selected={defaultArticleState.fontColor}
+						selected={fontColor}
 						options={fontColors}
 						title='Цвет шрифта'
+						onChange={(option: OptionType) => setFontColor(option)}
 					/>
 					<Separator />
 					<Select
-						selected={defaultArticleState.backgroundColor}
+						selected={backgroundColor}
 						options={backgroundColors}
 						title='Цвет фона'
+						onChange={(option: OptionType) => setBackgroundColor(option)}
 					/>
 					<Select
-						selected={defaultArticleState.contentWidth}
+						selected={contentWidth}
 						options={contentWidthArr}
 						title='Ширина контента'
+						onChange={(option: OptionType) => setContentWidth(option)}
 					/>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' type='reset' />
-						<Button title='Применить' type='submit' />
+						<Button title='Сбросить' type='reset' onClick={handleReset}/>
+						<Button title='Применить' type='submit' onClick={handleSubmit}/>
 					</div>
 				</form>
 			</aside>
