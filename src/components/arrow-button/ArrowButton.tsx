@@ -6,8 +6,8 @@ import styles from './ArrowButton.module.scss';
 export type OnClick = () => void;
 
 type ArrowButtonProps = {
-	click: OnClick,
-	isOpen: boolean
+	click: OnClick;
+	isOpen: boolean;
 };
 
 export const ArrowButton = (props: ArrowButtonProps) => {
@@ -17,9 +17,15 @@ export const ArrowButton = (props: ArrowButtonProps) => {
 			role='button'
 			aria-label='Открыть/Закрыть форму параметров статьи'
 			tabIndex={0}
-			className={styles.container + ' ' + (props.isOpen ? styles.container_open : '')}
+			className={
+				styles.container + ' ' + (props.isOpen ? styles.container_open : '')
+			}
 			onClick={props.click}>
-			<img src={arrow} alt='иконка стрелочки' className={styles.arrow + ' ' + (props.isOpen ? styles.arrow_open : '')} />
+			<img
+				src={arrow}
+				alt='иконка стрелочки'
+				className={styles.arrow + ' ' + (props.isOpen ? styles.arrow_open : '')}
+			/>
 		</div>
 	);
 };
