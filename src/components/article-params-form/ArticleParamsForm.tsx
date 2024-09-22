@@ -2,11 +2,12 @@ import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
 
 import styles from './ArticleParamsForm.module.scss';
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Select } from '../select/Select';
 import { RadioGroup } from '../radio-group';
 import { Text } from '../text';
 import { ArticleStateType, OptionType } from 'src/constants/articleProps';
+import { useOutsideClickClose } from '../select/hooks/useOutsideClickClose';
 
 import {
 	fontFamilyOptions,
@@ -14,15 +15,14 @@ import {
 	backgroundColors,
 	contentWidthArr,
 	fontSizeOptions,
-	defaultArticleState
+	defaultArticleState,
 } from 'src/constants/articleProps';
 import { Separator } from '../separator';
+import React from 'react';
 
 type ArticleParamsFormProps = {
 	settings: ArticleStateType;
 	onSettingsChange: (settings: ArticleStateType) => void;
-	handleToggle: () => void;
-	isMenuOpen: boolean;
 };
 
 export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
@@ -33,6 +33,13 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	const [backgroundColor, setBackgroundColor] = useState(
 		props.settings.backgroundColor
 	);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+	const rootRef = useRef<HTMLDivElement>(null);
+
+	const handleToggle = () => {
+		setIsMenuOpen(!isMenuOpen);
+	};
 
 	const handleReset = () => {
 		setFont(defaultArticleState.fontFamilyOption);
@@ -48,26 +55,50 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 			fontSizeOption: fontSize,
 			fontColor,
 			contentWidth,
-			backgroundColor
+			backgroundColor,
 		});
 		event?.preventDefault();
-		props.handleToggle();
+		handleToggle();
 	};
 
+	const handleOutsideClick = (event: MouseEvent) => {
+		const { target } = event;
+		if (
+			target instanceof Node &&
+			document.querySelector('article')?.contains(target)
+		) {
+			setIsMenuOpen(false);
+		}
+	};
+
+	useEffect(() => {
+		if (isMenuOpen) {
+			window.addEventListener('click', handleOutsideClick);
+		}
+
+		return () => {
+			window.removeEventListener('click', handleOutsideClick);
+		};
+	}, [setIsMenuOpen, isMenuOpen]);
+
+	
 	document.addEventListener('keydown', (event) => {
-		if (event.key === 'Escape' && props.isMenuOpen) {
-			props.handleToggle();
+		if (event.key === 'Escape' && isMenuOpen) {
+			handleToggle();
 		}
 	});
 
 	return (
-		<>
-			<ArrowButton click={props.handleToggle} isOpen={props.isMenuOpen} />
+		<div ref={isMenuOpen ? rootRef : null}>
+			<ArrowButton click={handleToggle} isOpen={isMenuOpen} />
 			<aside
 				className={
-					styles.container + ' ' + (props.isMenuOpen ? styles.container_open : '')
+					styles.container + ' ' + (isMenuOpen ? styles.container_open : '')
 				}>
-				<form className={styles.form} onSubmit={handleSubmit}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}>
 					<Text as='h2' size={31} weight={800} uppercase dynamicLite>
 						Задайте параметры
 					</Text>
@@ -104,11 +135,11 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 						onChange={(option: OptionType) => setContentWidth(option)}
 					/>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' type='reset' onClick={handleReset}/>
-						<Button title='Применить' type='submit'/>
+						<Button title='Сбросить' type='reset' />
+						<Button title='Применить' type='submit' />
 					</div>
 				</form>
 			</aside>
-		</>
+		</div>
 	);
 };

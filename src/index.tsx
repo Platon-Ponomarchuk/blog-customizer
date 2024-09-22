@@ -20,15 +20,6 @@ const App = () => {
 		contentWidth: defaultArticleState.contentWidth,
 		backgroundColor: defaultArticleState.backgroundColor,
 	});
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-	const handleToggle = () => {
-		setIsMenuOpen(!isMenuOpen);
-	};
-
-	const handleClose = () => {
-		setIsMenuOpen(false);
-	};
 
 	return (
 		<div
@@ -45,10 +36,8 @@ const App = () => {
 			<ArticleParamsForm
 				settings={settings}
 				onSettingsChange={(settings: ArticleStateType) => setSettings(settings)}
-				handleToggle={handleToggle}
-				isMenuOpen={isMenuOpen}
 			/>
-			<Article handleClose={handleClose}/>
+			<Article/>
 		</div>
 	);
 };
